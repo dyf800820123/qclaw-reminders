@@ -1,0 +1,34 @@
+name: QClaw Email Reminders
+
+on:
+  schedule:
+    - cron: '0 7 * * *'
+    - cron: '0 12 * * *'
+    - cron: '0 18 * * *'
+  workflow_dispatch:
+
+jobs:
+  send-email:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Send reminder
+        run: |
+          HOUR=$(TZ=Asia/Shanghai date +%H)
+          if [ "$HOUR" = "07" ]; then
+            MEAL="早餐后"
+            EMOJI="🌅"
+          elif [ "$HOUR" = "12" ]; then
+            MEAL="午餐后"
+            EMOJI="☀️"
+          elif [ "$HOUR" = "18" ]; then
+            MEAL="晚餐后"
+            EMOJI="🌙"
+          else
+            echo "Wrong time"
+            exit 0
+          fi
+
+          curl -X POST https://api.resend.com/emails \
+            -H "Authorization: Bearer ${{ secrets.RESEND_API_KEY }}" \
+            -H "Content-Type: application/json" \
+            -d "{\"from\":\"QClaw Reminder <onboarding@resend.dev>\",\"to\":[\"6894303@qq.com\"],\"subject\":\"${EMOJI} 吃药提醒 - ${MEAL}\",\"text\":\"🔥 嘉嘉提醒：${MEAL}记得吃药哦！\n时间：$(TZ=Asia/Shanghai date '+%Y-%m-%d %H:%M')\"}"
