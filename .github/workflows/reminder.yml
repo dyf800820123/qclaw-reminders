@@ -1,36 +1,36 @@
 name: QClaw Email Reminders
 
 on:
-  schedule:
-    - cron: '0 23 * * *'
-    - cron: '0 4 * * *'
-    - cron: '0 10 * * *'
-  workflow_dispatch:
+ schedule:
+ - cron: '0 16 * * *' # UTC 16:00 + ~7h延迟 = 北京07:00 早餐
+ - cron: '0 21 * * *' # UTC 21:00 + ~7h延迟 = 北京12:00 午餐
+ - cron: '0 3 * * *' # UTC 03:00 + ~7h延迟 = 北京18:00 晚餐
+ workflow_dispatch:
 
 jobs:
-  send-email:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Send breakfast reminder
-        if: github.event.schedule == '0 23 * * *'
-        run: |
-          curl -X POST https://api.resend.com/emails \
-            -H "Authorization: Bearer ${{ secrets.RESEND_API_KEY }}" \
-            -H "Content-Type: application/json" \
-            -d '{"from":"QClaw Reminder <onboarding@resend.dev>","to":["6894303@qq.com"],"subject":"🍳 吃药提醒 - 早餐后","text":"🔥 嘉嘉提醒：早餐后记得吃药哦！\n时间：'"$(TZ=Asia/Shanghai date '+%Y-%m-%d %H:%M')"'"}'
+ send-email:
+ runs-on: ubuntu-latest
+ steps:
+ - name: Send breakfast reminder
+ if: github.event.schedule == '0 16 * * *'
+ run: |
+ curl -X POST https://api.resend.com/emails \
+ -H "Authorization: Bearer ${{ secrets.RESEND_API_KEY }}" \
+ -H "Content-Type: application/json" \
+ -d '{"from":"QClaw Reminder <onboarding@resend.dev>","to":["6894303@qq.com"],"subject":"🍳 吃药提醒 - 早餐后","text":"🔥 嘉嘉提醒：早餐后记得吃药哦！\n时间：'"$(TZ=Asia/Shanghai date '+%Y-%m-%d %H:%M')"'"}}'
 
-      - name: Send lunch reminder
-        if: github.event.schedule == '0 4 * * *'
-        run: |
-          curl -X POST https://api.resend.com/emails \
-            -H "Authorization: Bearer ${{ secrets.RESEND_API_KEY }}" \
-            -H "Content-Type: application/json" \
-            -d '{"from":"QClaw Reminder <onboarding@resend.dev>","to":["6894303@qq.com"],"subject":"☀️ 吃药提醒 - 午餐后","text":"🔥 嘉嘉提醒：午餐后记得吃药哦！\n时间：'"$(TZ=Asia/Shanghai date '+%Y-%m-%d %H:%M')"'"}'
+ - name: Send lunch reminder
+ if: github.event.schedule == '0 21 * * *'
+ run: |
+ curl -X POST https://api.resend.com/emails \
+ -H "Authorization: Bearer ${{ secrets.RESEND_API_KEY }}" \
+ -H "Content-Type: application/json" \
+ -d '{"from":"QClaw Reminder <onboarding@resend.dev>","to":["6894303@qq.com"],"subject":"☀️ 吃药提醒 - 午餐后","text":"🔥 嘉嘉提醒：午餐后记得吃药哦！\n时间：'"$(TZ=Asia/Shanghai date '+%Y-%m-%d %H:%M')"'"}}'
 
-      - name: Send dinner reminder
-        if: github.event.schedule == '0 10 * * *'
-        run: |
-          curl -X POST https://api.resend.com/emails \
-            -H "Authorization: Bearer ${{ secrets.RESEND_API_KEY }}" \
-            -H "Content-Type: application/json" \
-            -d '{"from":"QClaw Reminder <onboarding@resend.dev>","to":["6894303@qq.com"],"subject":"🌙 吃药提醒 - 晚餐后","text":"🔥 嘉嘉提醒：晚餐后记得吃药哦！\n时间：'"$(TZ=Asia/Shanghai date '+%Y-%m-%d %H:%M')"'"}'
+ - name: Send dinner reminder
+ if: github.event.schedule == '0 3 * * *'
+ run: |
+ curl -X POST https://api.resend.com/emails \
+ -H "Authorization: Bearer ${{ secrets.RESEND_API_KEY }}" \
+ -H "Content-Type: application/json" \
+ -d '{"from":"QClaw Reminder <onboarding@resend.dev>","to":["6894303@qq.com"],"subject":"🌙 吃药提醒 - 晚餐后","text":"🔥 嘉嘉提醒
