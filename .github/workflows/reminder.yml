@@ -2,9 +2,9 @@ name: QClaw Email Reminders
 
 on:
  schedule:
- - cron: '0 16 * * *' # UTC 16:00 + ~7h延迟 = 北京07:00 早餐
- - cron: '0 21 * * *' # UTC 21:00 + ~7h延迟 = 北京12:00 午餐
- - cron: '0 3 * * *' # UTC 03:00 + ~7h延迟 = 北京18:00 晚餐
+ - cron: '0 16 * * *'
+ - cron: '0 21 * * *'
+ - cron: '0 3 * * *'
  workflow_dispatch:
 
 jobs:
@@ -33,4 +33,4 @@ jobs:
  curl -X POST https://api.resend.com/emails \
  -H "Authorization: Bearer ${{ secrets.RESEND_API_KEY }}" \
  -H "Content-Type: application/json" \
- -d '{"from":"QClaw Reminder <onboarding@resend.dev>","to":["6894303@qq.com"],"subject":"🌙 吃药提醒 - 晚餐后","text":"🔥 嘉嘉提醒
+ -d '{"from":"QClaw Reminder <onboarding@resend.dev>","to":["6894303@qq.com"],"subject":"🌙 吃药提醒 - 晚餐后","text":"🔥 嘉嘉提醒：晚餐后记得吃药哦！\n时间：'"$(TZ=Asia/Shanghai date '+%Y-%m-%d %H:%M')"'"}}'
